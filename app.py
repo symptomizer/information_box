@@ -3,8 +3,10 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from flask_cors import CORS
 import wptools
+import re
 
-
+cleanr = re.compile('\[[^\]]*\||\[\[|\]\]')
+# removing_pipes = re.compile('\[[^\]]*\||')
 
 app = Flask(__name__)
 CORS(app)
@@ -13,6 +15,27 @@ cors = CORS(app, resource={
         "origins":"*"
     }
 })
+
+with open('fields.txt') as f:
+    fields_list = [x.rstrip() for x in f] # remove line breaks
+
+
+def clean_info_string(string):
+    cleantext = re.sub(cleanr, '', string)
+    # cleantext = re.sub(removing_pipes, ' ', cleantext)
+    if("{{" in cleantext):
+        return ""
+    return cleantext
+
+
+def process_info_box(infobox):
+    returned_infobox = {}
+    for key in infobox.keys():
+        if key in fields_list:
+            clean_text = clean_info_string(infobox[key])
+            if (len(clean_text) > 0):
+                returned_infobox[key] = clean_text 
+    return returned_infobox
 
 @app.route('/')
 def index():
@@ -32,8 +55,7 @@ def info():
     return_obj['aliases'] = aliases
     wikidata = wptools.page(title).get_parse()
     infobox = wikidata.data['infobox']
-    return_obj['infobox'] = infobox
-
+    return_obj['infobox'] = process_info_box(infobox)
     return jsonify(return_obj)
 
 if __name__ == '__main__':
