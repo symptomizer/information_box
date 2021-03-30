@@ -37,4 +37,4 @@ def info():
     return jsonify(return_obj)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8889)
+    app.run(debug=True, host="0.0.0.0", port=8889)
