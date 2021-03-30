@@ -1,10 +1,8 @@
 from flask import Flask, jsonify, request
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
-from fast_autocomplete import AutoComplete
 from flask_cors import CORS
 import wptools
-import pandas as pd
 
 
 
