@@ -1,0 +1,6 @@
+flask
+fuzzywuzzy
+fast-autocomplete
+flask_cors
+wptools
+pandas
